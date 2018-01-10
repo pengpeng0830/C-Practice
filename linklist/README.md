@@ -1,0 +1,2 @@
+# linklist
+- practise for linklist
