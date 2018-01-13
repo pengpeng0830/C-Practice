@@ -1,9 +1,9 @@
 #include "Public.h"
 #include "Softtimer.h"
 #include "stdlib.h"
-#include "stdio.h"
 
 static T_SOFTTIMER_NODE *sg_ptSofttimerHead = NULL;  /* The head of the linklist */
+T_SOFTTIMER_NODE *g_aptSofttimerTimeout[E_SOFTTIMER_TASK_NUM] = {NULL};
 
 /******************************************************************************
 * Name       : unsigned char CreateLinklist(void)
@@ -19,6 +19,12 @@ static T_SOFTTIMER_NODE *sg_ptSofttimerHead = NULL;  /* The head of the linklist
 ******************************************************************************/
 uint8 SofttimerInit(void)
 {
+    uint8 u8TaskID;
+    for (u8TaskID = 0; u8TaskID < E_SOFTTIMER_TASK_NUM; u8TaskID++)
+    {
+        g_aptSofttimerTimeout[u8TaskID] = NULL;
+    }
+    
     sg_ptSofttimerHead = (T_SOFTTIMER_NODE *)malloc(sizeof(T_SOFTTIMER_NODE));
     if (NULL == sg_ptSofttimerHead)
     {
@@ -47,19 +53,22 @@ uint8 SofttimerInit(void)
 uint16 CreateSofttimer(T_SOFTTIMER *ptSofttimer)
 {
     T_SOFTTIMER_NODE *ptTail,*ptAddSofttimer;
-
+    if (NULL == sg_ptSofttimerHead)
+    {
+        return FAULT;
+    }
     if ((NULL == ptSofttimer) || (0 == ptSofttimer->u16Count))
     {
         return FAULT;
     }
-    ptTail = sg_ptSofttimerHead;    
+    ptTail = sg_ptSofttimerHead;
     ptAddSofttimer = (T_SOFTTIMER_NODE *)malloc(sizeof(T_SOFTTIMER_NODE));
     if (NULL == ptAddSofttimer)
     {
         return FAULT;
     }
     
-    while (NULL != ptTail)
+    while (NULL != ptTail->ptNext)
     {
         ptTail = ptTail->ptNext;
     }
@@ -147,7 +156,7 @@ void DeleteAllSofttimer(void)
 * Author     : XZP
 * Date       : 11th Jan 2018
 ******************************************************************************/
-void ProcessSofttimer(uint16 uint16CurrentTime)
+void ProcessSofttimer(uint16 u16CurrentTime)
 {
     T_SOFTTIMER_NODE *ptTail;
     uint16 uint16SetTime;
@@ -163,11 +172,11 @@ void ProcessSofttimer(uint16 uint16CurrentTime)
         {
             uint16SetTime = ptTail->tSofttimer.u16Period + ptTail->tSofttimer.u16OldTime;
         }
-            
-        if (uint16SetTime < uint16CurrentTime)  /* Timeup */
+        
+        if (uint16SetTime < u16CurrentTime)  /* Timeup */
         {
-            printf("TASK ID:%d timeout",ptTail->tSofttimer.u8TaskID);
-            ptTail->tSofttimer.u16OldTime = uint16CurrentTime;
+            g_aptSofttimerTimeout[ptTail->tSofttimer.u8TaskID] = ptTail;
+            ptTail->tSofttimer.u16OldTime = u16CurrentTime;
             if (0xffff != ptTail->tSofttimer.u16Count)
             {
                 ptTail->tSofttimer.u16Count--;
@@ -181,6 +190,5 @@ void ProcessSofttimer(uint16 uint16CurrentTime)
     }
     
     return;
-
 }
 
