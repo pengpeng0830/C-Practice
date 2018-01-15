@@ -5,20 +5,16 @@
 extern "C" {
 #endif
 
-#define FAULT    (0)
-#define TRUE     (1)
-
 typedef uint32 (*PF_SOFTTIMER_CB)(void *pPara);
 
 typedef struct _T_SOFTTIMER  
 {  
-    PF_SOFTTIMER_CB pfSofttimerCB;    /* »Øµ÷º¯Êý */
-    uint8  u8TaskID;                  /* ¶¨Ê±Æ÷ID */
-    uint16 u16OldTime;                /* »ù×¼Ê±¼ä */
-    uint16 u16Period;                 /* ¶¨Ê±ÖÜÆÚ */
-    uint16 u16Count;                  /* Ö´ÐÐ´ÎÊý */
+    PF_SOFTTIMER_CB pfSofttimerCB;    /* 回调函数 */
+    uint32 u32OldTime;                /* 基准时间 */
+    uint32 u32Period;                 /* 定时周期 */
+    uint16 u16Count;                  /* 执行次数 */
+    uint8  u8TaskID;                  /* 定时器ID */
 }T_SOFTTIMER;
-
 
 typedef struct _T_SOFTTIMER_NODE
 {  
@@ -29,7 +25,7 @@ typedef struct _T_SOFTTIMER_NODE
 extern PF_SOFTTIMER_CB g_aptSofttimerTimeout[E_SOFTTIMER_TASK_NUM];
 
 /******************************************************************************
-* Name       : uint8 SofttimerInit(void)
+* Name       : uint16 SofttimerInit(void)
 * Function   : Create a Linklist head
 * Input      : None
 * Output:    : None
@@ -40,7 +36,7 @@ extern PF_SOFTTIMER_CB g_aptSofttimerTimeout[E_SOFTTIMER_TASK_NUM];
 * Author     : XZP
 * Date       : 14th Jan 2018
 ******************************************************************************/
-uint8 SofttimerInit(void);
+uint16 SofttimerInit(void);
 
 /******************************************************************************
 * Name       : uint16 CreateSofttimer(T_SOFTTIMER *ptSofttimer)
@@ -84,9 +80,9 @@ uint16 DeleteSofttimer(uint8 u8TaskID);
 void DeleteAllSofttimer(void);
 
 /******************************************************************************
-* Name       : void ProcessSofttimer(uint16 u16CurrentTime)
+* Name       : void ProcessSofttimer(uint32 u32CurrentTime)
 * Function   : Process softtimer
-* Input      : uint16 u16CurrentTime
+* Input      : uint32 u32CurrentTime
 * Output:    : None
 * Return     : None
 * Description: None
@@ -94,7 +90,7 @@ void DeleteAllSofttimer(void);
 * Author     : XZP
 * Date       : 14th Jan 2018
 ******************************************************************************/
-void ProcessSofttimer(uint16 u16CurrentTime);
+void ProcessSofttimer(uint32 u32CurrentTime);
 
 #ifdef __cplusplus
 }
