@@ -6,7 +6,7 @@ static T_SOFTTIMER_NODE *sg_ptSofttimerHead = NULL;  /* The head of the linklist
 PF_SOFTTIMER_CB g_aptSofttimerTimeout[E_SOFTTIMER_TASK_NUM] = {NULL};
 
 /******************************************************************************
-* Name       : uint8 SofttimerInit(void)
+* Name       : uint16 SofttimerInit(void)
 * Function   : Create a Linklist head
 * Input      : None
 * Output:    : None
@@ -17,7 +17,7 @@ PF_SOFTTIMER_CB g_aptSofttimerTimeout[E_SOFTTIMER_TASK_NUM] = {NULL};
 * Author     : XZP
 * Date       : 14th Jan 2018
 ******************************************************************************/
-uint8 SofttimerInit(void)
+uint16 SofttimerInit(void)
 {
     uint8 u8TaskID;
     for (u8TaskID = 0; u8TaskID < E_SOFTTIMER_TASK_NUM; u8TaskID++)
@@ -70,8 +70,8 @@ uint16 CreateSofttimer(T_SOFTTIMER *ptSofttimer)
         ptTail = ptTail->ptNext;
     }
     ptAddSofttimer->tSofttimer.u16Count      = ptSofttimer->u16Count;
-    ptAddSofttimer->tSofttimer.u16Period     = ptSofttimer->u16Period;
-    ptAddSofttimer->tSofttimer.u16OldTime    = ptSofttimer->u16OldTime;
+    ptAddSofttimer->tSofttimer.u32Period     = ptSofttimer->u32Period;
+    ptAddSofttimer->tSofttimer.u32OldTime    = ptSofttimer->u32OldTime;
     ptAddSofttimer->tSofttimer.u8TaskID      = ptSofttimer->u8TaskID;
     ptAddSofttimer->tSofttimer.pfSofttimerCB = ptSofttimer->pfSofttimerCB;
     ptAddSofttimer->ptNext  = NULL;
@@ -143,9 +143,9 @@ void DeleteAllSofttimer(void)
 }
 
 /******************************************************************************
-* Name       : void ProcessSofttimer(uint16 u16CurrentTime)
+* Name       : void ProcessSofttimer(uint32 u32CurrentTime)
 * Function   : Process softtimer
-* Input      : uint16 u16CurrentTime
+* Input      : uint32 u32CurrentTime
 * Output:    : None
 * Return     : None
 * Description: None
@@ -153,19 +153,19 @@ void DeleteAllSofttimer(void)
 * Author     : XZP
 * Date       : 14th Jan 2018
 ******************************************************************************/
-void ProcessSofttimer(uint16 u16CurrentTime)
+void ProcessSofttimer(uint32 u32CurrentTime)
 {
     T_SOFTTIMER_NODE *ptTail;
-    uint16 u16DelayTime;
+    uint32 u32DelayTime;
     
     ptTail = sg_ptSofttimerHead->ptNext;
     while (NULL != ptTail)
     {
-        u16DelayTime = u16CurrentTime - ptTail->tSofttimer.u16OldTime;
-        if (u16DelayTime >= ptTail->tSofttimer.u16Period)  /* Timeup */
+        u32DelayTime = u32CurrentTime - ptTail->tSofttimer.u32OldTime;
+        if (u32DelayTime >= ptTail->tSofttimer.u32Period)  /* Timeup */
         {
             g_aptSofttimerTimeout[ptTail->tSofttimer.u8TaskID] = ptTail->tSofttimer.pfSofttimerCB;
-            ptTail->tSofttimer.u16OldTime = u16CurrentTime;
+            ptTail->tSofttimer.u32OldTime = u32CurrentTime;
             if (0xffff != ptTail->tSofttimer.u16Count)
             {
                 ptTail->tSofttimer.u16Count--;
