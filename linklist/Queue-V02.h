@@ -9,7 +9,7 @@
 
 typedef struct Queue   
 {  
-    void *pPara;       /* 指向分配的内存                   */
+    pvoid *pPara;      /* 指向分配的内存                   */
     uint8 u8ChannelNo; /* 通道号                           */
     uint8 u8Front;     /* 指向队列第一个元素               */
     uint8 u8Rear;      /* 指向队列最后一个元素的下一个元素 */
@@ -74,7 +74,7 @@ uint16 EmptyQueueCheck(uint8 u8ChannelNo);
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 QueueAddPara(uint8 u8ChannelNo, uint8 u8Para);
+uint16 QueueInput(uint8 u8ChannelNo, pvoid *pPara);
 
 /******************************************************************************
 * Name       : uint16 QueueDeletePara(uint8 u8ChannelNo, uint8 u8Para)
@@ -88,7 +88,7 @@ uint16 QueueAddPara(uint8 u8ChannelNo, uint8 u8Para);
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 QueueDeletePara(uint8 u8ChannelNo, uint8 *pu8Para);
+uint16 QueueOutput(uint8 u8ChannelNo, pvoid *pPara);
 
 #endif
 
