@@ -1,4 +1,7 @@
-#include "Queue.h"
+#include "Public.h"
+#include "queue.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 static T_QUEUE *sg_aptQueuePara[E_QUEUE_CHANNEL_NUM] = NULL;
 
@@ -29,7 +32,7 @@ uint16 CreateQueue(T_QUEUE *ptQueuePara)
 
     sg_aptQueuePara[ptQueuePara->u8ChannelNo] = ptQueuePara;
 
-    ptQueuePara->pPara = (void *)malloc(ptQueuePara->u8MaxSize * sizeof(void *));
+    ptQueuePara->pPara = (pvoid *)malloc(ptQueuePara->u8MaxSize * sizeof(pvoid *));
     if (NULL == ptQueuePara->pPara)
     {
         printf("Create Queue Failed!");
@@ -115,7 +118,7 @@ uint16 EmptyQueueCheck(uint8 u8ChannelNo)
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 QueueInput(uint8 u8ChannelNo, void *pPara)
+uint16 QueueInput(uint8 u8ChannelNo, pvoid *pPara)
 {
     T_QUEUE *ptQueueTemp;
 
@@ -128,7 +131,7 @@ uint16 QueueInput(uint8 u8ChannelNo, void *pPara)
         return FAULT;
     }
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
-    ptQueueTemp->pPara[ptQueueTemp->u8Rear] = pPara;
+    ptQueueTemp->pPara[ptQueueTemp->u8Rear] = (pvoid)pPara;
     ptQueueTemp->u8Rear = (ptQueueTemp->u8Rear + 1) % ptQueueTemp->u8MaxSize;
 
     return TRUE;
@@ -146,7 +149,7 @@ uint16 QueueInput(uint8 u8ChannelNo, void *pPara)
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 QueueOutput(uint8 u8ChannelNo, void *pPara)
+uint16 QueueOutput(uint8 u8ChannelNo, pvoid *pPara)
 {
     T_QUEUE *ptQueueTemp;
 
@@ -159,7 +162,7 @@ uint16 QueueOutput(uint8 u8ChannelNo, void *pPara)
         return FAULT;
     }
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
-    (&pPara) = ptQueueTemp->pPara[ptQueueTemp->u8Front];
+    pPara = (pvoid *)ptQueueTemp->pPara[ptQueueTemp->u8Front];
     ptQueueTemp->u8Front = (ptQueueTemp->u8Front + 1) % ptQueueTemp->u8MaxSize;
 
     return TRUE;
