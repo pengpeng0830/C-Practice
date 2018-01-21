@@ -16,7 +16,6 @@ typedef struct Queue
     uint8 u8MaxSize;   /* 循环队列的最大存储空间           */
 }T_QUEUE;  
 
-
 /******************************************************************************
 * Name       : uint16 CreateQueue(T_QUEUE *ptQueuePara)
 * Function   : Create a Queue
@@ -62,13 +61,13 @@ uint16 FullQueueCheck(uint8 u8ChannelNo);
 uint16 EmptyQueueCheck(uint8 u8ChannelNo);
 
 /******************************************************************************
-* Name       : uint16 QueueAddPara(uint8 u8ChannelNo, uint8 u8Para)
-* Function   : Add a para into queue
+* Name       : uint16 QueueInput(uint8 u8ChannelNo, pvoid *pPara)
+* Function   : Input a para into queue
 * Input      : uint8 u8ChannelNo
-*              uint8 u8Para
+*              pvoid *pPara:the input para
 * Output:    : None
-* Return     : FAULT:Add para failed
-*              TRUE :Add para success
+* Return     : FAULT:Input para failed
+*              TRUE :Input para success
 * Description: None
 * Version    : V1.00
 * Author     : XZP
@@ -77,12 +76,12 @@ uint16 EmptyQueueCheck(uint8 u8ChannelNo);
 uint16 QueueInput(uint8 u8ChannelNo, pvoid *pPara);
 
 /******************************************************************************
-* Name       : uint16 QueueDeletePara(uint8 u8ChannelNo, uint8 u8Para)
-* Function   : Delete a para from queue
+* Name       : uint16 QueueOutput(uint8 u8ChannelNo, pvoid *pPara)
+* Function   : Output a para from queue
 * Input      : uint8 u8ChannelNo
-* Output:    : uint8 *pu8Para: The delete para
-* Return     : FAULT:Delete para failed
-*              TRUE :Delete para success
+* Output:    : pvoid *pPara: The output para
+* Return     : FAULT:Output para failed
+*              TRUE :Output para success
 * Description: None
 * Version    : V1.00
 * Author     : XZP
