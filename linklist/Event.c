@@ -3,30 +3,29 @@
 #include "Event.h"
 
 /******************************************************************************
-* Name       : uint16 CreateQueue(T_QUEUE *ptQueuePara)
-* Function   : Create a Queue
-* Input      : T_QUEUE *ptQueuePara
+* Name       : uint16 EventInit(T_QUEUE *ptEventPara)
+* Function   : Create a event queue
+* Input      : T_QUEUE *ptEventPara
 * Output:    : None
-* Return     : FAULT:Create queue failed
-*              TRUE: Create queue success
+* Return     : FAULT:Create event failed
+*              TRUE: Create event success
 * Description: None
 * Version    : V1.00
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 EventInit(T_QUEUE *ptQueuePara)
+uint16 EventInit(T_QUEUE *ptEventPara)
 {
-    ptQueuePara->u8ChannelNo = E_QUEUE_EVENT;
-    return CreateQueue(ptQueuePara);
+    ptEventPara->u8ChannelNo = E_QUEUE_EVENT;
+    return CreateQueue(ptEventPara);
 }
 
 /******************************************************************************
-* Name       : uint16 EmptyQueueCheck(uint8 u8ChannelNo)
-* Function   : Check the queue is empty or not
-* Input      : uint8 u8ChannelNo
+* Name       : uint16 EmptyEventCheck(void)
+* Function   : Check the event queue is empty or not
+* Input      : None
 * Output:    : None
-* Return     : FAULT        :Input u8ChannelNo is error
-*              QUEUE_EMPTY  :Queue is empty
+* Return     : QUEUE_EMPTY  :Queue is empty
 *              QUEUE_NOEMPTY:Queue is not empty
 * Description: None
 * Version    : V1.00
@@ -39,13 +38,12 @@ uint16 EmptyEventCheck(void)
 }
 
 /******************************************************************************
-* Name       : uint16 QueueInput(uint8 u8ChannelNo, uint8 u8Para)
-* Function   : Input a para into queue
-* Input      : uint8 u8ChannelNo
-*              uint8 u8Para
+* Name       : uint16 EventSet(pvoid *pPara)
+* Function   : Input a event into queue
+* Input      : pvoid *pPara
 * Output:    : None
-* Return     : FAULT:Add para failed
-*              TRUE :Add para success
+* Return     : FAULT:Input event failed
+*              TRUE :Input event success
 * Description: None
 * Version    : V1.00
 * Author     : XZP
@@ -57,12 +55,12 @@ uint16 EventSet(pvoid *pPara)
 }
 
 /******************************************************************************
-* Name       : uint16 QueueOutput(uint8 u8ChannelNo, uint8 *pu8Para)
-* Function   : Output a para from queue
-* Input      : uint8 u8ChannelNo
-* Output:    : uint8 *pu8Para: The delete para
-* Return     : FAULT:Delete para failed
-*              TRUE :Delete para success
+* Name       : uint16 EventGet(pvoid *pPara)
+* Function   : Output a event from queue
+* Input      : None
+* Output:    : pvoid *pPara
+* Return     : FAULT:Output event failed
+*              TRUE :Output event success
 * Description: None
 * Version    : V1.00
 * Author     : XZP
@@ -74,25 +72,24 @@ uint16 EventGet(pvoid *pPara)
 }
 
 /******************************************************************************
-* Name       : uint16 QueueOutput(uint8 u8ChannelNo, uint8 *pu8Para)
-* Function   : Output a para from queue
-* Input      : uint8 u8ChannelNo
-* Output:    : uint8 *pu8Para: The delete para
-* Return     : FAULT:Delete para failed
-*              TRUE :Delete para success
+* Name       : void EventProcess(void)
+* Function   : Process event
+* Input      : None
+* Output:    : None
+* Return     : None
 * Description: None
 * Version    : V1.00
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 EventProcess(void)
+void EventProcess(void)
 {
     PF_EVENT_CB Event_CB;
     if (QUEUE_NOEMPTY == EmptyEventCheck())
     {
-        EventGet((pvoid *)Event_CB);
+        EventGet((pvoid *)(&Event_CB));
         Event_CB();
     }
-    return TRUE;
+    return;
 }
 
