@@ -21,23 +21,6 @@ uint16 EventInit(T_QUEUE *ptEventPara)
 }
 
 /******************************************************************************
-* Name       : uint16 EmptyEventCheck(void)
-* Function   : Check the event queue is empty or not
-* Input      : None
-* Output:    : None
-* Return     : QUEUE_EMPTY  :Queue is empty
-*              QUEUE_NOEMPTY:Queue is not empty
-* Description: None
-* Version    : V1.00
-* Author     : XZP
-* Date       : 15th Jan 2018
-******************************************************************************/
-uint16 EmptyEventCheck(void)
-{
-    return EmptyQueueCheck(E_QUEUE_EVENT);
-}
-
-/******************************************************************************
 * Name       : uint16 EventSet(pvoid *pPara)
 * Function   : Input a event into queue
 * Input      : pvoid *pPara
@@ -85,9 +68,8 @@ uint16 EventGet(pvoid *pPara)
 void EventProcess(void)
 {
     PF_EVENT_CB Event_CB;
-    if (QUEUE_NOEMPTY == EmptyEventCheck())
+    if (TRUE == EventGet((pvoid *)(&Event_CB)))
     {
-        EventGet((pvoid *)(&Event_CB));
         Event_CB();
     }
     return;
