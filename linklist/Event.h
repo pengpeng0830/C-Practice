@@ -1,7 +1,14 @@
 #ifndef __EVENT_H
 #define __EVENT_H
 
-typedef uint32 (*PF_EVENT_CB)(void);
+typedef uint32 (*PF_EVENT_CB)(void *pPara);
+
+typedef struct
+{
+    PF_EVENT_CB pFCB;    /* 指向回调函数 */
+    void *pPara;         /* 回调函数形参 */
+}T_EVENT;
+
 
 /******************************************************************************
 * Name       : uint16 EventInit(T_QUEUE *ptEventPara)
