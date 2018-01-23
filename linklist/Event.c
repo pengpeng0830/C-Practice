@@ -67,10 +67,10 @@ uint16 EventGet(pvoid *pPara)
 ******************************************************************************/
 void EventProcess(void)
 {
-    PF_EVENT_CB Event_CB;
+    T_EVENT Event_CB;
     if (TRUE == EventGet((pvoid *)(&Event_CB)))
     {
-        Event_CB();
+        Event_CB.pFCB(Event_CB.pPara);
     }
     return;
 }
