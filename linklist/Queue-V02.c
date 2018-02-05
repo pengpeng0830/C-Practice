@@ -17,7 +17,7 @@ static T_QUEUE *sg_aptQueuePara[E_QUEUE_CHANNEL_NUM] = NULL;
 * Author     : XZP
 * Date       : 15th Jan 2018
 ******************************************************************************/
-uint16 CreateQueue(T_QUEUE *ptQueuePara)
+pvoid *CreateQueue(T_QUEUE *ptQueuePara)
 {
     if (NULL == ptQueuePara)
     {
@@ -29,7 +29,10 @@ uint16 CreateQueue(T_QUEUE *ptQueuePara)
         printf("Create Queue Failed!");
         return FAULT;
     }
-
+    if (NULL != sg_aptQueuePara[ptQueuePara->u8ChannelNo])
+    {
+        return FAULT;
+    }
     sg_aptQueuePara[ptQueuePara->u8ChannelNo] = ptQueuePara;
 
     ptQueuePara->pPara = (pvoid *)malloc(ptQueuePara->u8MaxSize * sizeof(pvoid *));
@@ -40,6 +43,37 @@ uint16 CreateQueue(T_QUEUE *ptQueuePara)
     }
     ptQueuePara->u8Front = 0;
     ptQueuePara->u8Rear  = 0;
+    
+    return ptQueuePara->pPara;
+}
+
+/******************************************************************************
+* Name       : uint16 DeleteQueue(uint8 u8ChannelNo)
+* Function   : Delete a Queue
+* Input      : uint8 u8ChannelNo
+* Output:    : None
+* Return     : FAULT:Delete queue failed
+*              TRUE: Delete queue success
+* Description: None
+* Version    : V1.00
+* Author     : XZP
+* Date       : 5th Feb 2018
+******************************************************************************/
+uint16 DeleteQueue(uint8 u8ChannelNo)
+{
+    T_QUEUE *ptQueueTemp;
+
+    if (u8ChannelNo >= E_QUEUE_CHANNEL_NUM)
+    {
+        return FAULT;
+    }
+    ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
+    if (NULL == ptQueueTemp)
+    {
+        return FAULT;
+    }
+    free(ptQueueTemp->pPara);
+    sg_aptQueuePara[u8ChannelNo] = NULL;
     
     return TRUE;
 }
@@ -67,6 +101,10 @@ uint16 FullQueueCheck(uint8 u8ChannelNo)
     }
     
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
+    if (NULL == ptQueueTemp)
+    {
+        return FAULT;
+    }
     if (ptQueueTemp->u8Front == ((ptQueueTemp->u8Rear + 1) % ptQueueTemp->u8MaxSize))
     {
         return QUEUE_FULL;
@@ -97,6 +135,10 @@ uint16 EmptyQueueCheck(uint8 u8ChannelNo)
     }
     
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
+    if (NULL == ptQueueTemp)
+    {
+        return FAULT;
+    }
     if (ptQueueTemp->u8Front == ptQueueTemp->u8Rear)
     {
         return QUEUE_EMPTY;
@@ -131,6 +173,10 @@ uint16 QueueInput(uint8 u8ChannelNo, pvoid *pPara)
         return FAULT;
     }
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
+    if (NULL == ptQueueTemp)
+    {
+        return FAULT;
+    }
     ptQueueTemp->pPara[ptQueueTemp->u8Rear] = (pvoid)pPara;
     ptQueueTemp->u8Rear = (ptQueueTemp->u8Rear + 1) % ptQueueTemp->u8MaxSize;
 
@@ -162,6 +208,10 @@ uint16 QueueOutput(uint8 u8ChannelNo, pvoid *pPara)
         return FAULT;
     }
     ptQueueTemp = sg_aptQueuePara[u8ChannelNo];
+    if (NULL == ptQueueTemp)
+    {
+        return FAULT;
+    }
     *pPara = ptQueueTemp->pPara[ptQueueTemp->u8Front];
     ptQueueTemp->u8Front = (ptQueueTemp->u8Front + 1) % ptQueueTemp->u8MaxSize;
 
